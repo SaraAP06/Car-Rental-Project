@@ -1,5 +1,6 @@
 #include "myextensionsview.h"
 #include "ui_myextensionsview.h"
+#include "session.h"
 
 #include <QFile>
 #include <QTextStream>
@@ -44,19 +45,19 @@ void myExtensionsView::loadExtensions()
         if (parts.size() < 5)
             continue;
 
-        if (parts[0] != "1")
+        if (parts[0].toInt() != session::userId)
             continue;
 
         ui->extensionTableWidget->insertRow(row);
 
         ui->extensionTableWidget->setItem(row, 0,
-                                    new QTableWidgetItem(parts[1]));
+                                          new QTableWidgetItem(parts[1]));
         ui->extensionTableWidget->setItem(row, 1,
-                                    new QTableWidgetItem(parts[2]));
+                                          new QTableWidgetItem(parts[2]));
         ui->extensionTableWidget->setItem(row, 2,
-                                    new QTableWidgetItem(parts[3]));
+                                          new QTableWidgetItem(parts[3]));
         ui->extensionTableWidget->setItem(row, 3,
-                                    new QTableWidgetItem(parts[4]));
+                                          new QTableWidgetItem(parts[4]));
 
         row++;
     }

@@ -1,6 +1,7 @@
 #include "myreservationsview.h"
 #include "ui_myreservationsview.h"
 #include "extensionview.h"
+#include "session.h"
 
 #include <QFile>
 #include <QTextStream>
@@ -46,7 +47,7 @@ void myReservationsView::loadReservations()
             continue;
 
         // فقط رزروهای customer فعلی
-        if (parts[0] != "1")
+        if (parts[0].toInt() != session::userId)
             continue;
 
         ui->reservationTableWidget->insertRow(row);
@@ -82,4 +83,3 @@ void myReservationsView::on_extensionPushButton_clicked()
         new extensionView(carId, endDate);
     view->show();
 }
-

@@ -49,4 +49,3 @@ void customerdashboard::on_pmyExtensionsPushButton_clicked()
     myExtensionsView *view = new myExtensionsView();
     view->show();
 }
-

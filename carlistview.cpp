@@ -61,7 +61,7 @@ void carListView::showCars(const QList<QStringList>& cars)
         ui->CarTableWidget->insertRow(i);
         for (int j = 0; j < 5; j++) {
             ui->CarTableWidget->setItem(i, j,
-                                  new QTableWidgetItem(cars[i][j]));
+                                        new QTableWidgetItem(cars[i][j]));
         }
     }
 }
@@ -116,4 +116,3 @@ void carListView::on_filterPushButton_clicked()
 
     showCars(filtered);
 }
-

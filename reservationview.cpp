@@ -1,5 +1,8 @@
 #include "reservationview.h"
 #include "ui_reservationview.h"
+#include "session.h"
+
+#include <QStringList>
 #include <QFile>
 #include <QTextStream>
 #include <QMessageBox>
@@ -24,6 +27,76 @@ reservationView::~reservationView()
     delete ui;
 }
 
+void updateCarStatus(const QString &carId)
+{
+    QString path = QCoreApplication::applicationDirPath() + "/cars.txt";
+    QFile file(path);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
+    QStringList lines;
+    QTextStream in(&file);
+
+    while (!in.atEnd())
+        lines.append(in.readLine());
+
+    file.close();
+
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return;
+
+    QTextStream out(&file);
+
+    for (int i = 0; i < lines.size(); i++)
+    {
+        QStringList parts = lines[i].split(",");
+
+        if (parts.size() == 5 && parts[0] == carId)
+            parts[4] = "Reserved";
+
+        out << parts.join(",") << "\n";
+    }
+
+    file.close();
+}
+
+void createPayment(const QString &carId)
+{
+    QString carPath = QCoreApplication::applicationDirPath() + "/cars.txt";
+    QFile carFile(carPath);
+
+    if (!carFile.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
+    QTextStream in(&carFile);
+    int price = 0;
+
+    while (!in.atEnd())
+    {
+        QStringList parts = in.readLine().split(",");
+        if (parts.size() == 5 && parts[0] == carId)
+        {
+            price = parts[3].toInt();
+            break;
+        }
+    }
+
+    carFile.close();
+
+    QString payPath = QCoreApplication::applicationDirPath() + "/payments.txt";
+    QFile payFile(payPath);
+
+    if (!payFile.open(QIODevice::Append | QIODevice::Text))
+        return;
+
+    QTextStream out(&payFile);
+    out << "1," << carId << "," << price << ",Unpaid\n";
+
+    payFile.close();
+}
+
+
 void reservationView::on_confirmPushButton_clicked()
 {
     QDate start = ui->startDateEdit->date();
@@ -47,20 +120,26 @@ void reservationView::on_confirmPushButton_clicked()
 
     QTextStream out(&file);
 
-    // فرمت:
-    // customerId,carId,startDate,endDate,status
-    out << "1," << carId << ","
+    out << session::userId << "," << carId << ","
         << start.toString("yyyy-MM-dd") << ","
         << end.toString("yyyy-MM-dd") << ",Pending\n";
 
     file.close();
 
+    // تغییر وضعیت ماشین
+    updateCarStatus(carId);
+
+    // ساخت Payment
+    createPayment(carId);
+
     QMessageBox::information(this, "Done",
-                             "Reservation request submitted");
+                             "Reservation submitted & Car reserved");
+
     close();
 }
 
 void reservationView::on_cancelPushButton_clicked()
 {
-    close();
+
 }
+

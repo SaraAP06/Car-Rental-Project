@@ -22,5 +22,7 @@ private slots:
 
 private:
     Ui::LoginWindow *ui;
+    int getNextUserId();
+    bool usernameExists(const QString &username);
 };
 #endif // LOGINWINDOW_H

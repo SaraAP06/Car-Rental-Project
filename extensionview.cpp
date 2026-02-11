@@ -1,5 +1,7 @@
 #include "extensionview.h"
 #include "ui_extensionview.h"
+#include "session.h"
+
 #include <QFile>
 #include <QTextStream>
 #include <QMessageBox>
@@ -52,7 +54,7 @@ void extensionView::on_submitPushButton_clicked()
 
     QTextStream out(&file);
 
-    out << "1," << carId << ","
+    out << session::userId << "," << carId << ","
         << oldEndDate << ","
         << newDate.toString("yyyy-MM-dd")
         << ",Pending\n";

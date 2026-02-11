@@ -1,5 +1,11 @@
 #include "paymentview.h"
 #include "ui_paymentview.h"
+#include "session.h"
+
+#include <QFile>
+#include <QTextStream>
+#include "paymentview.h"
+#include "ui_paymentview.h"
 #include <QFile>
 #include <QTextStream>
 #include <QStringList>
@@ -43,17 +49,17 @@ void paymentView::loadPayments()
         if (parts.size() != 4)
             continue;
 
-        if (parts[0] != "1")
+        if (parts[0].toInt() != session::userId)
             continue;
 
         ui->paymentTableWidget->insertRow(row);
 
         ui->paymentTableWidget->setItem(row, 0,
-                                  new QTableWidgetItem(parts[1]));
+                                        new QTableWidgetItem(parts[1]));
         ui->paymentTableWidget->setItem(row, 1,
-                                  new QTableWidgetItem(parts[2]));
+                                        new QTableWidgetItem(parts[2]));
         ui->paymentTableWidget->setItem(row, 2,
-                                  new QTableWidgetItem(parts[3]));
+                                        new QTableWidgetItem(parts[3]));
 
         row++;
     }
@@ -84,11 +90,10 @@ void paymentView::on_payPushButton_clicked()
                              "Payment successful");
 
     ui->paymentTableWidget->setItem(row, 2,
-                              new QTableWidgetItem("Paid"));
+                                    new QTableWidgetItem("Paid"));
 }
 
 void paymentView::on_backPushButton_clicked()
 {
 
 }
-
